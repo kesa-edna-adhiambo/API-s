@@ -6,10 +6,7 @@ from shopping.models import Shopping
 from shoppingitem.models import ShoppingItem
 from recipes.models import Recipe
 from django.contrib.auth.models import User
-
-
-
-
+from django.contrib.auth.hashers import make_password
 
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,12 +22,13 @@ class MinimalIngredientSerializer(serializers.ModelSerializer):
 class PantrySerializer(serializers.ModelSerializer):
     class Meta:
         model = Pantry
-        fields = '__all__'
+        fields = ['id', 'quantity', 'item', 'users', 'category']
+
 
 class MinimalPantrySerializer(serializers.ModelSerializer):
     class Meta:
         model = Pantry
-        fields = [ "item", "quantity"]
+        fields = [ "item", "quantity", 'users', 'category']
 
 
 class FoodItemsSerializer(serializers.ModelSerializer):
