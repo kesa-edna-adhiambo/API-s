@@ -8,7 +8,9 @@ from .views import (
     FoodItemsListView,
     FoodItemsByCategoryView,
     FoodItemsInCategoryDetailView
+    
 )
+from .views import RecipeListView, FetchRecipeView
 
 
 
@@ -29,5 +31,9 @@ urlpatterns = [
     path('shopping/<int:id>/', ShoppingListDetailView.as_view(), name='shopping_detail_view'), 
     path('shopping/items/', ShoppingItemListView.as_view(), name='shopping-item-list'),
     path('shopping/items/<int:shopping_list_item_id>/', ShoppingItemDetailView.as_view(), name='shopping-item-detail'),
+     path('recipes/', RecipeListView.as_view(), name='recipe-list'),  
+    path('recipes/fetch/<str:recipe_id>/', FetchRecipeView.as_view(), name='fetch-recipe'), 
     
 ]
+
+

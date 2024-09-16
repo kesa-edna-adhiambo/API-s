@@ -4,6 +4,7 @@ from pantry.models import Pantry
 from categories.models import Categories, FoodItems
 from shopping.models import Shopping
 from shoppingitem.models import ShoppingItem
+from recipes.models import Recipe
 
 
 
@@ -50,6 +51,12 @@ class Shopping_listSerializer(serializers.ModelSerializer):
 class ShoppingItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShoppingItem
+        fields = '__all__'
+
+
+class RecipeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recipe
         fields = '__all__'
 
 
