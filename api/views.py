@@ -4,10 +4,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from ingredients.models import Ingredients
+from django.shortcuts import get_object_or_404
 import pantry
 from .serializers import IngredientSerializer, MinimalIngredientSerializer
 from pantry.models import Pantry
 from .serializers import PantrySerializer, MinimalPantrySerializer
+from categories.models import Categories, FoodItems
+from .serializers import CategoriesSerializer, FoodItemsSerializer
+
 
 class IngredientListView(APIView):
     def get(self,request):
@@ -129,6 +133,86 @@ class PantryDetailView(APIView):
 
 
 
+class CategoriesListView(APIView):
+    def get(self, request):
+        
+        categories = Categories.objects.all()
+        serializer = CategoriesSerializer(categories, many=True)
+        return Response(serializer.data)
+
+class CategoriesDetailView(APIView):
+    def get(self, request, id):
+        category = get_object_or_404(Categories, id=id)
+        serializer = CategoriesSerializer(category)
+        return Response(serializer.data)
+
+    def put(self, request, id):
+        category = get_object_or_404(Categories, id=id)
+        serializer = CategoriesSerializer(instance=category, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class FoodItemsListView(APIView):
+    def get(self, request):
+        food_items = FoodItems.objects.all()
+        serializer = FoodItemsSerializer(food_items, many=True)
+        return Response(serializer.data)
     
+    def post(self, request):
+        serializer = FoodItemsSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class FoodItemsByCategoryView(APIView):
+    def get(self, request, category_id):
+        category = get_object_or_404(Categories, id=category_id)
+        food_items = category.food_items.all()
+        serializer = FoodItemsSerializer(food_items, many=True)
+        return Response(serializer.data)
+
+class FoodItemsDetailView(APIView):
+    def get(self, request, id):
+        food_item = get_object_or_404(FoodItems, id=id)
+        serializer = FoodItemsSerializer(food_item)
+        return Response(serializer.data)
+
+    def put(self, request, id):
+        food_item = get_object_or_404(FoodItems, id=id)
+        serializer = FoodItemsSerializer(instance=food_item, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id):
+        food_item = get_object_or_404(FoodItems, id=id)
+        food_item.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class FoodItemsInCategoryDetailView(APIView):
+    def get(self, request, category_id, food_item_id):
+        category = get_object_or_404(Categories, id=category_id)
+        food_item = get_object_or_404(FoodItems, id=food_item_id, category=category)
+        serializer = FoodItemsSerializer(food_item)
+        return Response(serializer.data)
+
+    def put(self, request, category_id, food_item_id):
+        category = get_object_or_404(Categories, id=category_id)
+        food_item = get_object_or_404(FoodItems, id=food_item_id, category=category)
+        serializer = FoodItemsSerializer(instance=food_item, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, category_id, food_item_id):
+        category = get_object_or_404(Categories, id=category_id)
+        food_item = get_object_or_404(FoodItems, id=food_item_id, category=category)
+        food_item.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 

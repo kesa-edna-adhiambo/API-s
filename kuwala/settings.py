@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'ingredients',
     'pantry',
     'api',
+    'categories',
+
 ]
 
 MIDDLEWARE = [
