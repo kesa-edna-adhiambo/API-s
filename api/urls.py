@@ -1,6 +1,7 @@
-from django.urls import path
-from .views import IngredientListView, IngredientsDetailView, PantrySearchView
-from .views import PantryListView, PantryDetailView
+from django.urls import path,  include
+from django.contrib import admin
+from .views import IngredientListView, IngredientsDetailView, PantrySearchView, ShoppingListDetailView , ShoppingListView
+from .views import PantryListView, PantryDetailView, ShoppingItemListView, ShoppingItemDetailView
 from .views import (
     CategoriesListView,
     CategoriesDetailView,
@@ -8,6 +9,8 @@ from .views import (
     FoodItemsByCategoryView,
     FoodItemsInCategoryDetailView
 )
+
+
 
 
 
@@ -21,5 +24,10 @@ urlpatterns = [
     path('categories/<int:id>/', CategoriesDetailView.as_view(), name='category_detail'),
     path('food-items/', FoodItemsListView.as_view(), name='food_items_list'),
     path('categories/<int:category_id>/food-items/', FoodItemsByCategoryView.as_view(), name='food_items_by_category'),
-    path('categories/<int:category_id>/food-items/<int:food_item_id>/', FoodItemsInCategoryDetailView.as_view(), name='food_item_in_category_detail'),      
+    path('categories/<int:category_id>/food-items/<int:food_item_id>/', FoodItemsInCategoryDetailView.as_view(), name='food_item_in_category_detail'),  
+    path('shopping/', ShoppingListView.as_view(), name='shopping_list_view'),
+    path('shopping/<int:id>/', ShoppingListDetailView.as_view(), name='shopping_detail_view'), 
+    path('shopping/items/', ShoppingItemListView.as_view(), name='shopping-item-list'),
+    path('shopping/items/<int:shopping_list_item_id>/', ShoppingItemDetailView.as_view(), name='shopping-item-detail'),
+    
 ]

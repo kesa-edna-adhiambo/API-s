@@ -12,6 +12,11 @@ from .serializers import PantrySerializer, MinimalPantrySerializer
 from categories.models import Categories, FoodItems
 from .serializers import CategoriesSerializer, FoodItemsSerializer
 
+from shopping.models import Shopping  
+from shoppingitem.models import ShoppingItem  
+from .serializers import ShoppingItemSerializer 
+from .serializers import Shopping_listSerializer
+
 
 class IngredientListView(APIView):
     def get(self,request):
@@ -214,5 +219,98 @@ class FoodItemsInCategoryDetailView(APIView):
         food_item = get_object_or_404(FoodItems, id=food_item_id, category=category)
         food_item.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+
+class ShoppingListView(APIView):
+    def post(self, request):
+        serializer = Shopping_listSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request):
+        shopping_list = Shopping.objects.all()
+        serializer = Shopping_listSerializer(shopping_list, many=True)
+        return Response(serializer.data)
+
+class ShoppingListDetailView(APIView):
+    def get(self, request, shopping_list_id):
+        shopping_item = get_object_or_404(Shopping, shopping_list_id=shopping_list_id)
+        serializer = Shopping_listSerializer(shopping_item)
+        return Response(serializer.data)
+
+    def put(self, request, shopping_list_id):
+        shopping_item = get_object_or_404(Shopping, shopping_list_id=shopping_list_id)
+        serializer = Shopping_listSerializer(shopping_item, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, shopping_list_id):
+        shopping_item = get_object_or_404(Shopping, shopping_list_id=shopping_list_id)
+        shopping_item.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+class ShoppingItemListView(APIView):
+    def post(self, request):
+        shopping_list = Shopping.objects.first() 
+
+        if not shopping_list:
+            return Response({"error": "No available shopping list to assign."}, status=status.HTTP_400_BAD_REQUEST)
+
+        request.data['shopping_list_id'] = shopping_list.shopping_list_id
+
+        serializer = ShoppingItemSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request):
+        shopping_items = ShoppingItem.objects.all()
+        serializer = ShoppingItemSerializer(shopping_items, many=True)
+        return Response(serializer.data)
+
+
+class ShoppingItemDetailView(APIView):
+    def get(self, request, shopping_list_item_id):
+        shopping_item = get_object_or_404(ShoppingItem, shopping_list_item_id=shopping_list_item_id)
+        serializer = ShoppingItemSerializer(shopping_item)
+        return Response(serializer.data)
+
+    def put(self, request, shopping_list_item_id):
+        shopping_item = get_object_or_404(ShoppingItem, shopping_list_item_id=shopping_list_item_id)
+        if 'shopping_list_item_id' not in request.data:
+            request.data['shopping_list_item_id'] = shopping_item.shopping_list_item_id
+        serializer = ShoppingItemSerializer(shopping_item, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()  
+            return Response(serializer.data) 
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+
+    def delete(self, request, shopping_list_item_id):
+        shopping_item = get_object_or_404(ShoppingItem, shopping_list_item_id=shopping_list_item_id)
+        shopping_item.delete() 
+        return Response(status=status.HTTP_204_NO_CONTENT)  
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
