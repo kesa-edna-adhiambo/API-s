@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'shoppingitem',
     'api',
     'categories',
+    'recipes',
 
 ]
 

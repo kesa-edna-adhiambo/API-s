@@ -16,6 +16,11 @@ from shopping.models import Shopping
 from shoppingitem.models import ShoppingItem  
 from .serializers import ShoppingItemSerializer 
 from .serializers import Shopping_listSerializer
+from rest_framework import generics
+from django.http import JsonResponse
+import recipes
+from recipes.models import Recipe
+from .serializers import RecipeSerializer
 
 
 class IngredientListView(APIView):
@@ -301,6 +306,36 @@ class ShoppingItemDetailView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)  
 
 
+class RecipeListView(generics.ListCreateAPIView):
+    queryset = Recipe.objects.all()
+    serializer_class = RecipeSerializer
+
+class FetchRecipeView(generics.GenericAPIView):
+    def get(self, request, recipe_id):
+        
+        url = f"https://www.themealdb.com/api/json/v1/1/search.php?s={recipe_id}"
+        response = requests.get(url)
+        
+       
+        if response.status_code != 200:
+            return JsonResponse({'error': 'Could not fetch recipe from MealDB'}, status=500)
+
+        data = response.json()
+
+        if 'meals' in data and data['meals']:
+            meal = data['meals'][0]
+           
+            ingredients = {k: v for k, v in meal.items() if k.startswith('strIngredient') and v}
+            recipe = Recipe.objects.create(
+                id=meal['idMeal'],
+                label=meal['strMeal'],
+                url=meal['strSource'],
+                ingredients=list(ingredients.values()),
+                image=meal['strMealThumb']
+            )
+            return JsonResponse(RecipeSerializer(recipe).data, status=201)
+        
+        return JsonResponse({'error': 'Recipe not found in MealDB'}, status=404)
 
 
 
