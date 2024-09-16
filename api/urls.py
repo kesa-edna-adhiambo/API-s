@@ -12,8 +12,7 @@ from .views import (
 )
 from .views import RecipeListView, FetchRecipeView
 
-
-
+from .views import RegisterView, LoginView
 
 
 urlpatterns = [
@@ -33,6 +32,8 @@ urlpatterns = [
     path('shopping/items/<int:shopping_list_item_id>/', ShoppingItemDetailView.as_view(), name='shopping-item-detail'),
      path('recipes/', RecipeListView.as_view(), name='recipe-list'),  
     path('recipes/fetch/<str:recipe_id>/', FetchRecipeView.as_view(), name='fetch-recipe'), 
+     path('users/register/', RegisterView.as_view(), name='user-register'),
+    path('users/login/', LoginView.as_view(), name='user-login'),
     
 ]
 

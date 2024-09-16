@@ -5,6 +5,8 @@ from categories.models import Categories, FoodItems
 from shopping.models import Shopping
 from shoppingitem.models import ShoppingItem
 from recipes.models import Recipe
+from django.contrib.auth.models import User
+
 
 
 
@@ -61,6 +63,13 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
 
+class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
 
+    class Meta:
+        model = User
+        fields = ['email', 'password', 'first_name', 'last_name']  
 
-       
+    def create(self, validated_data):
+        validated_data['password'] = make_password(validated_data['password'])
+        return super().create(validated_data)

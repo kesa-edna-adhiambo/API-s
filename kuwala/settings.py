@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'api',
     'categories',
     'recipes',
+    'users',
 
 ]
 
