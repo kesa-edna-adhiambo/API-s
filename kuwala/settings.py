@@ -40,7 +40,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'ingredients',
     'pantry',
+    'shopping',
+    'shoppingitem',
     'api',
+    'categories',
+
 ]
 
 MIDDLEWARE = [
